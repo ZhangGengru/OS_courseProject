@@ -10,15 +10,8 @@ int main()
 	vector<vector<int>> max{{7, 5, 3}, { 3,2,2 }, { 9,0,2 }, { 2,2,2 }, { 4,3,3 }};
 	vector<vector<int>> alloc{{0, 1, 0}, { 2,0,0 }, { 3,0,2 }, { 2,1,1 }, { 0,0,2 }};
 	vector<int> Avai{3, 3, 2};
+	//vector<int> Avai{0,0,0};
 	Banker myBank(5, 3, max, alloc, Avai);
-	/*myBank.resourcePrint();
-	cout << "--------------------------------------------------" << endl;
-	if (myBank.isSafe())
-		myBank.safePrint();
-	else
-		myBank.unsafePrint();
-	Banker::requestPrint(myBank.requestResource(2, { 1,0,0 }), 2);
-	Banker::requestPrint(myBank.requestResource(4, { 3,3,1 }), 4);*/
 	while (1)
 	{
 		myBank.resourcePrint();
@@ -32,8 +25,8 @@ int main()
 		cout << endl << endl;
 		if (switch_num == 1)
 		{
-			if (myBank.isSafe());
-			//myBank.safePrint();
+			if (myBank.isSafe())
+			myBank.safePrint();
 			else
 				myBank.unsafePrint();
 			system("pause");
@@ -41,6 +34,14 @@ int main()
 		}
 		else if (switch_num == 2)
 		{
+			int a = 1;
+			if (!myBank.isSafe(a))
+			{
+				system("cls");
+				cout << "当前数据状态不安全，无法请求资源！"<<endl;
+				continue;
+			}
+			cout << "安全，可以请求,";
 			int pid = -1;
 			string req;
 			vector<int> request(3, 0);
@@ -50,7 +51,7 @@ int main()
 			for (int i = 0; i < myBank.get_resourceNum(); i++)
 				cin >> request[i];
 			cout << endl;
-			Banker::requestPrint(myBank.requestResource(pid, request), pid);
+			myBank.requestPrint(myBank.requestResource(pid, request), pid);
 			system("pause");
 			system("cls");
 		}

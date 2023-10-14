@@ -110,7 +110,7 @@ int Banker::requestResource(int process_id, vector<int> req)
 		Need[process_id][i] -= req[i];
 	}
 	resourcePrint();
-	if (!isSafe())
+	if (!isSafe(1))
 	{
 		for (int i = 0; i < resourceNum; i++)	//回收资源
 		{
@@ -120,40 +120,44 @@ int Banker::requestResource(int process_id, vector<int> req)
 		}
 		return 3;
 	}
-	else
+	//下属代码看需求，如果是连续分配，则不需要恢复，如果只是尝试单词，即可恢复
+	/*else
 		for (int i = 0; i < resourceNum; i++)	//恢复
 		{
 			Available[i] += req[i];
 			Allocation[process_id][i] -= req[i];
 			Need[process_id][i] += req[i];
+		}*/
+	cout << "安全序列为：" << endl;
+	for (const auto& r : result)
+	{
+		for (int i = 0; i < r.size(); i++)
+		{
+			cout << r[i] << " ";
+			if (i != r.size() - 1)
+				cout << "-> ";
 		}
+		cout << endl;
+	}
 	return 0;
 }
 
 bool Banker::isSafe()
 {
-	//array<int, resourceNum> work;//预分配矩阵
+	path.clear();
+	result.clear();
 	vector<int> work;
 	work = Available;
-	//vector<vector<int>> back_alloca(Allocation.begin(), Allocation.end());
-	//bool isChecked[processNum] = { false };		//true:第i个资源被检查过且能分配资源
-	//array<bool, processNum> isChecked = { false };
 	vector<bool> isChecked(processNum, false);
 	isSafeRecursive(work, isChecked);
-	/*for (int i = 0; i < processNum; i++)
-		if (!isChecked[i])
-			return false;*/
 	if (result.empty())
 		return false;
-
 	return true;
 }
 
 void Banker::isSafeRecursive(vector<int>& work, vector<bool>& isChecked)
 {
 	bool hasFound = false;
-	/*if (start == processNum)
-		return;*/
 	if (path.size() == processNum)
 	{
 		result.push_back(path);
@@ -168,7 +172,6 @@ void Banker::isSafeRecursive(vector<int>& work, vector<bool>& isChecked)
 			for (int j = 0; j < resourceNum; j++)
 			{
 				if (Need[i][j] > work[j])
-					//isSafeRecursive(work, isChecked, i + 1);
 					break;
 				if (j == resourceNum - 1)
 				{
@@ -183,16 +186,12 @@ void Banker::isSafeRecursive(vector<int>& work, vector<bool>& isChecked)
 					isChecked[i] = false;
 					for (int k = 0; k < resourceNum; k++)
 						work[k] -= Allocation[i][k];
-					//resourcePrint(work, i, isChecked);
 				}
 			}
 		}
-	}//for (int i = start; i < processNum; i++)
+	}
 	if (!hasFound)
 		return;
-	/*for (int i = 0; i < processNum; i++)
-		if (!isChecked[i])
-			isSafeRecursive(work, isChecked);*/
 }
 
 void Banker::safePrint(int print_num)
@@ -311,6 +310,53 @@ void Banker::requestPrint(int i, int pid)
 		cout << "分配失败！假定分配后，无法通过安全性检查！" << endl;
 	if (i == 0)
 		cout << "分配成功！" << endl;
+}
+bool Banker::isSafe(int a)
+{
+	path.clear();
+	result.clear();
+	vector<int> work;
+	work = Available;
+	vector<bool> isChecked(processNum, false);
+	isSafeRecursive(work, isChecked,a);
+	if (result.empty())
+		return false;
+	return true;
+}
+void Banker::isSafeRecursive(vector<int>& work, vector<bool>& isChecked, int a)
+{
+	bool hasFound = false;
+	if (path.size() == processNum)
+	{
+		result.push_back(path);
+		return;
+	}
+	for (int i = 0; i < processNum; i++)
+	{
+		if (!isChecked[i])
+		{
+			for (int j = 0; j < resourceNum; j++)
+			{
+				if (Need[i][j] > work[j])
+					break;
+				if (j == resourceNum - 1)
+				{
+					for (int k = 0; k < resourceNum; k++)
+						work[k] += Allocation[i][k];
+					isChecked[i] = true;
+					hasFound = true;
+					path.push_back(i);
+					isSafeRecursive(work, isChecked,a);
+					path.pop_back();
+					isChecked[i] = false;
+					for (int k = 0; k < resourceNum; k++)
+						work[k] -= Allocation[i][k];
+				}
+			}
+		}
+	}
+	if (!hasFound)
+		return;
 }
 
 

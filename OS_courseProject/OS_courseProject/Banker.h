@@ -15,6 +15,7 @@ public:
 	int requestResource(int process_id, vector<int> req);
 	//bool checkSafe();
 	bool isSafe();
+	bool isSafe(int a);
 	void safePrint();
 	void unsafePrint();
 	void resourcePrint();
@@ -30,6 +31,7 @@ private:
 	vector<vector<int>> Need;
 	vector<int> Available;
 	void isSafeRecursive(vector<int>& work, vector<bool>& isChecked);
+	void isSafeRecursive(vector<int>& work, vector<bool>& isChecked,int a);
 	bool hasFound = false;
 	vector<int>path;
 	vector<vector<int>> result;
