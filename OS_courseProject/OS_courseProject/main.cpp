@@ -9,7 +9,7 @@ int main()
 	//Banker myBank;
 	vector<vector<int>> max{{7, 5, 3}, { 3,2,2 }, { 9,0,2 }, { 2,2,2 }, { 4,3,3 }};
 	vector<vector<int>> alloc{{0, 1, 0}, { 2,0,0 }, { 3,0,2 }, { 2,1,1 }, { 0,0,2 }};
-	vector<int> Avai{3, 3, 2};
+	vector<int> Avai{1,1,1};
 	//vector<int> Avai{0,0,0};
 	Banker myBank(5, 3, max, alloc, Avai);
 	while (1)
